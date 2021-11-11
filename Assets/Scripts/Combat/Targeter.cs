@@ -7,7 +7,13 @@ using Mirror;
 //stick to the unit so it can target things
 public class Targeter : NetworkBehaviour
 {
-    [SerializeField] private Targetable target; 
+    private Targetable target; 
+
+
+    public Targetable GetTarget()
+    {
+        return target;
+    }
 
     #region Server
 

@@ -9,19 +9,39 @@ public class UnitMovement : NetworkBehaviour
 {
 
     [SerializeField] private NavMeshAgent agent = null;
-    [SerializeField] Targeter targeter = null;    
-
+    [SerializeField] Targeter targeter = null;
+    [SerializeField] private float chaseRange = 10f;//chase when distance greater than this
     #region Server
 
     [ServerCallback]
     private void Update()
     {
+        Targetable target = targeter.GetTarget();
+        //if we have a target, we just chase him
+        if(target != null)
+        {
+            if (Vector3.Distance(target.transform.position, transform.position) > chaseRange)
+            {
+                //chase him
+                agent.SetDestination(target.transform.position);
+            }
+            else if(agent.hasPath)
+            {
+                //stop
+                agent.ResetPath();
+            }
+            return;
+        }
+
+        //if we don't have a path -> we are not moving -> we don't do anything -> keep don't do anything
         if (!agent.hasPath) { return; }
+
+        //if we have a path, and moving towards destination, keep doing that
         if(agent.remainingDistance > agent.stoppingDistance)
         {
             return;
         }
-        else
+        else //we are close enough to destination, we stop
         {
             agent.ResetPath();
         }
