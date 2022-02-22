@@ -20,7 +20,7 @@ GameObject:
   - component: {fileID: 4586985154803598450}
   - component: {fileID: 1709650638983209652}
   - component: {fileID: 624040628465352518}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Unit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -273,7 +273,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5552299773448693685}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ProjectileSpawnPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -304,7 +304,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3440268642493751941}
   - component: {fileID: 5612711471317018043}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Circle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -385,7 +385,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1940959834739533147}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: AimAtPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -413,6 +413,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4148647283017073631}
     m_Modifications:
+    - target: {fileID: 8373413597720024658, guid: 0cc8fea123fc51645bad0c9f54deaad5, type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 8373413599164024441, guid: 0cc8fea123fc51645bad0c9f54deaad5, type: 3}
       propertyPath: m_Name
       value: HealthBarCanvas
@@ -420,6 +424,10 @@ PrefabInstance:
     - target: {fileID: 8373413599164024441, guid: 0cc8fea123fc51645bad0c9f54deaad5, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8373413599164024441, guid: 0cc8fea123fc51645bad0c9f54deaad5, type: 3}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8373413599164024443, guid: 0cc8fea123fc51645bad0c9f54deaad5, type: 3}
       propertyPath: m_LocalPosition.x
@@ -504,6 +512,10 @@ PrefabInstance:
     - target: {fileID: 8373413599164024443, guid: 0cc8fea123fc51645bad0c9f54deaad5, type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8373413599265313051, guid: 0cc8fea123fc51645bad0c9f54deaad5, type: 3}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0cc8fea123fc51645bad0c9f54deaad5, type: 3}
@@ -590,6 +602,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 034d47e46e143cb41a2b0459c0359ab9, type: 3}
       propertyPath: m_Name
       value: tank with lazer cannon
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 034d47e46e143cb41a2b0459c0359ab9, type: 3}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 034d47e46e143cb41a2b0459c0359ab9, type: 3}

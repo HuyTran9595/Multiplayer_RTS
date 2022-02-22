@@ -2,15 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
-
+using Assets.Scripts.Buildings;
 public class RTSPlayer : NetworkBehaviour
 {
+    [SerializeField] Building[] buildings = new Building[0];//edit in editor
     //this list exist both in client and server
-    [SerializeField] private List<Unit> myUnits = new List<Unit>();
-
+    private List<Unit> myUnits = new List<Unit>();
+    List<Building> myBuildings = new List<Building>();
     public List<Unit> GetMyUnits()
     {
         return myUnits;
+    }
+
+    public List<Building> GetMyBuildings()
+    {
+        return myBuildings;
     }
 
 
@@ -19,13 +25,53 @@ public class RTSPlayer : NetworkBehaviour
     {
         Unit.ServerOnUnitSpawned += ServerHandleUnitSpawned;
         Unit.ServerOnUnitDespawned += ServerHandleUnitDespawned;
+        Building.ServerOnBuildingSpawned += ServerHandleBuildingSpawned;
+        Building.ServerOnBuildingDespawned += ServerHandleBuildingDespawned;
     }
 
     public override void OnStopServer()
     {
         Unit.ServerOnUnitSpawned -= ServerHandleUnitSpawned;
         Unit.ServerOnUnitDespawned -= ServerHandleUnitDespawned;
+        Building.ServerOnBuildingSpawned -= ServerHandleBuildingSpawned;
+        Building.ServerOnBuildingDespawned -= ServerHandleBuildingDespawned;
     }
+
+    [Command]
+    public void CmdTryPlaceBuilding(int buildingID, Vector3 spawnPosition) {
+
+        Building buildingToSpawn = null;
+        //which building is it?
+        foreach(Building building in buildings) {
+            if(building.GetId() == buildingID) {
+                buildingToSpawn = building;
+            }
+            break;
+        }
+        //invalid ID, do nothing
+        if(buildingToSpawn is null) { return; }
+
+        //valid ID, spawn building
+        GameObject buildingInstance =  Instantiate(buildingToSpawn.gameObject, 
+                                                    spawnPosition, 
+                                                    buildingToSpawn.transform.rotation);
+
+        //give ownership of this building to player
+        //spawn on the network, show this building to all players
+        NetworkServer.Spawn(buildingInstance, connectionToClient);
+
+    }
+
+
+
+
+
+
+
+
+
+
+
 
     /// <summary>
     /// When a unit is respawned, it will trigger this function
@@ -57,6 +103,34 @@ public class RTSPlayer : NetworkBehaviour
         myUnits.Remove(unit);
     }
 
+
+    private void ServerHandleBuildingSpawned(Building building)
+    {
+        //server check. if the unit doesn't belong to the connecting client, do nothing
+        //we need server check because it's static delegate -> ALL client will call the same function
+        if (building.connectionToClient.connectionId != connectionToClient.connectionId)
+        {
+            return;
+        }
+
+        myBuildings.Add(building);
+    }
+
+
+    private void ServerHandleBuildingDespawned(Building building)
+    {
+        //server check. if the unit doesn't belong to the connecting client, do nothing
+        if (building.connectionToClient.connectionId != connectionToClient.connectionId)
+        {
+            return;
+        }
+
+        myBuildings.Remove(building);
+    }
+
+
+
+
     #endregion
 
     #region Client
@@ -72,7 +146,8 @@ public class RTSPlayer : NetworkBehaviour
         }
         Unit.AuthorityOnUnitSpawned += AuthorityHandleUnitSpawned;
         Unit.AuthorityOnUnitDespawned += AuthorityHandleUnitDespawned;
-        
+        Building.AuthorityOnBuildingSpawned += AuthorityHandleBuildingSpawned;
+        Building.AuthorityOnBuildingDespawned += AuthorityHandleBuildingDespawned;
     }
 
     /// <summary>
@@ -88,6 +163,8 @@ public class RTSPlayer : NetworkBehaviour
 
         Unit.AuthorityOnUnitSpawned -= AuthorityHandleUnitSpawned;
         Unit.AuthorityOnUnitDespawned -= AuthorityHandleUnitDespawned;
+        Building.AuthorityOnBuildingSpawned -= AuthorityHandleBuildingSpawned;
+        Building.AuthorityOnBuildingDespawned -= AuthorityHandleBuildingDespawned;
     }
 
     /// <summary>
@@ -105,6 +182,22 @@ public class RTSPlayer : NetworkBehaviour
     private void AuthorityHandleUnitDespawned(Unit unit)
     {
         myUnits.Remove(unit);
+    }
+
+
+    ////Building
+
+    private void AuthorityHandleBuildingSpawned(Building building)
+    {
+
+        //we still need to add unit in myUnit on the Client side
+        //basically the client has 1 myUnit, the server has 1 too. 
+        myBuildings.Add(building);
+
+    }
+    private void AuthorityHandleBuildingDespawned(Building building)
+    {
+        myBuildings.Remove(building);
     }
     #endregion
 }
