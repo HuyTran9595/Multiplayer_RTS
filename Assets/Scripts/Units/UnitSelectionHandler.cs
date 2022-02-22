@@ -36,7 +36,24 @@ public class UnitSelectionHandler : MonoBehaviour
         {
             Debug.LogError("Missing selection box image in " + name);
         }
+
+
+        Unit.AuthorityOnUnitDespawned += AuthorityHandleUnitDespawned;
     }
+
+    private void OnDestroy()
+    {
+        Unit.AuthorityOnUnitDespawned -= AuthorityHandleUnitDespawned;
+    }
+
+
+    private void AuthorityHandleUnitDespawned(Unit obj)
+    {
+        SelectedUnits.Remove(obj);
+    }
+
+
+
 
     private void Update()
     {

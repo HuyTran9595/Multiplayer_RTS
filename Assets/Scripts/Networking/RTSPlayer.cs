@@ -64,10 +64,9 @@ public class RTSPlayer : NetworkBehaviour
     /// <summary>
     /// this function is called by Client and Host
     /// </summary>
-    public override void OnStartClient()
+    public override void OnStartAuthority()
     {
-        base.OnStartClient();
-        if(!isClientOnly)
+        if(NetworkServer.active)
         {
             return;
         }
@@ -82,7 +81,7 @@ public class RTSPlayer : NetworkBehaviour
     public override void OnStopClient()
     {
         base.OnStopClient();
-        if (!isClientOnly)
+        if (!isClientOnly || !hasAuthority)
         {
             return;
         }
@@ -97,7 +96,6 @@ public class RTSPlayer : NetworkBehaviour
     /// </summary>
     private void AuthorityHandleUnitSpawned(Unit unit)
     {
-        if(!hasAuthority) { return; } //this line prevents ALl client add unit from other clients
         
         //we still need to add unit in myUnit on the Client side
         //basically the client has 1 myUnit, the server has 1 too. 
@@ -106,7 +104,6 @@ public class RTSPlayer : NetworkBehaviour
     }
     private void AuthorityHandleUnitDespawned(Unit unit)
     {
-        if (!hasAuthority) { return; }
         myUnits.Remove(unit);
     }
     #endregion

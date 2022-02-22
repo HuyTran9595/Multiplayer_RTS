@@ -12,6 +12,9 @@ public class Unit : NetworkBehaviour
     [SerializeField] private UnitMovement unitMovement = null;
     [SerializeField] private Targeter targeter = null;
 
+    [SerializeField] Health health = null;
+
+
     #region Server_Var
     //these works the same as delegate
     //these are the same as delegate in Moimachi Quest system
@@ -25,8 +28,10 @@ public class Unit : NetworkBehaviour
     //Authority = Client which has authority over this Unit
     public static event Action<Unit> AuthorityOnUnitSpawned;
     public static event Action<Unit> AuthorityOnUnitDespawned;
-
     #endregion
+
+
+
     public UnitMovement GetUnitMovement()
     {
         return unitMovement;
@@ -45,12 +50,21 @@ public class Unit : NetworkBehaviour
     public override void OnStartServer()
     {
         ServerOnUnitSpawned?.Invoke(this);
+        health.ServerOnDie += ServerHandleDie;
     }
 
 
     public override void OnStopServer()
     {
         ServerOnUnitDespawned?.Invoke(this);
+        health.ServerOnDie -= ServerHandleDie;
+    }
+
+
+    [Server]
+    private void ServerHandleDie()
+    {
+        NetworkServer.Destroy(gameObject);
     }
     #endregion
 
@@ -81,19 +95,8 @@ public class Unit : NetworkBehaviour
     /// <summary>
     /// this function is called by Client and Host -> need to restrict the host
     /// </summary>
-    public override void OnStartClient()
+    public override void OnStartAuthority()
     {
-        base.OnStartClient();
-        //in client side, we need to check for authority, otherwise all clients can own this unit
-        if (!hasAuthority)
-        {
-            return;
-        }
-        //if not client, return
-        if (!isClientOnly)
-        {
-            return;
-        }
 
         AuthorityOnUnitSpawned?.Invoke(this);
     }
@@ -109,11 +112,7 @@ public class Unit : NetworkBehaviour
         {
             return;
         }
-        //if not client, return
-        if (!isClientOnly)
-        {
-            return;
-        }
+
         AuthorityOnUnitDespawned?.Invoke(this);
     }
     #endregion

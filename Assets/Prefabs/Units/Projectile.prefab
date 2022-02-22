@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 6830034791689141802}
   - component: {fileID: 9220530548715363764}
   - component: {fileID: 4882661918103549194}
+  - component: {fileID: 2268567907559993843}
   m_Layer: 0
   m_Name: Projectile
   m_TagString: Untagged
@@ -138,7 +139,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6830034791689141803}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8f49b83f111a64bc7a5275af4f6f930b, type: 3}
   m_Name: 
@@ -148,3 +149,21 @@ MonoBehaviour:
   destroyAfter: 5
   rigidBody: {fileID: 9220530548715363764}
   force: 1000
+--- !u!114 &2268567907559993843
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6830034791689141803}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ad4fdcee168f124f9160cc5d19b1f5d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  rb: {fileID: 9220530548715363764}
+  lauchForce: 10
+  destroyAfterSeconds: 5
+  damage: 20
