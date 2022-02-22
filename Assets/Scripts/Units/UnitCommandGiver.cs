@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-
+using Assets.Scripts.Buildings;
 
 //when client clicks on the unit, move that unit
 //all this class is Client side. TryMove() call the server side to move the units
@@ -16,6 +16,13 @@ public class UnitCommandGiver : MonoBehaviour
     private void Start()
     {
         CheckNulls();
+        GameOverHandler.ClientOnGameOver += ClientHandleGameOver;
+    }
+
+
+    private void OnDestroy()
+    {
+        GameOverHandler.ClientOnGameOver -= ClientHandleGameOver;
     }
 
     private void CheckNulls()
@@ -79,5 +86,10 @@ public class UnitCommandGiver : MonoBehaviour
         {
             unit.GetUnitMovement().CmdMove(point);
         }
+    }
+
+    private void ClientHandleGameOver(string winnerName)
+    {
+        enabled = false;
     }
 }

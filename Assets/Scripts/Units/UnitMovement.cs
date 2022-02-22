@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.InputSystem;
-
+using Assets.Scripts.Buildings;
 public class UnitMovement : NetworkBehaviour
 {
 
@@ -12,6 +12,26 @@ public class UnitMovement : NetworkBehaviour
     [SerializeField] Targeter targeter = null;
     [SerializeField] private float chaseRange = 10f;//chase when distance greater than this
     #region Server
+
+
+    public override void OnStartServer()
+    {
+        GameOverHandler.ServerOnGameOver += ServerHandleGameOver;
+    }
+
+
+    public override void OnStopServer()
+    {
+        GameOverHandler.ServerOnGameOver -= ServerHandleGameOver;
+    }
+
+
+    [Server]
+    void ServerHandleGameOver()
+    {
+        agent.ResetPath();
+    }
+
 
     [ServerCallback]
     private void Update()

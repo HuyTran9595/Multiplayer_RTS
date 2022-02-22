@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 using System;
+using Assets.Scripts.Buildings;
 
 public class Health : NetworkBehaviour
 {
@@ -24,8 +25,14 @@ public class Health : NetworkBehaviour
 
     public override void OnStartServer()
     {
-        base.OnStartServer();
         currenthealth = maxHealth;
+        UnitBase.ServerOnPlayerDie += ServerHandlePlayerDie;
+    }
+
+
+    public override void OnStopServer()
+    {
+        UnitBase.ServerOnPlayerDie -= ServerHandlePlayerDie;
     }
 
 
@@ -44,6 +51,18 @@ public class Health : NetworkBehaviour
         //dead, raise event to die
         ServerOnDie?.Invoke();
         Debug.Log("We died");
+    }
+
+    [Server]
+    void ServerHandlePlayerDie(int connectionID)
+    {
+        if(connectionToClient.connectionId != connectionID)
+        {
+            return;
+        }
+
+        //delete this thing.
+        DealDamage(currenthealth);
     }
 
     #endregion

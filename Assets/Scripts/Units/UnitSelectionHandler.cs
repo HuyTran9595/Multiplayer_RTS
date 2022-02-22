@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Mirror;
+using Assets.Scripts.Buildings;
 
 //we don't need Network Behavior because the clients choose the unit
 //then, the Clients signify to the server which unit to move
@@ -39,11 +40,13 @@ public class UnitSelectionHandler : MonoBehaviour
 
 
         Unit.AuthorityOnUnitDespawned += AuthorityHandleUnitDespawned;
+        GameOverHandler.ClientOnGameOver += ClientHandleGameOver;
     }
 
     private void OnDestroy()
     {
         Unit.AuthorityOnUnitDespawned -= AuthorityHandleUnitDespawned;
+        GameOverHandler.ClientOnGameOver -= ClientHandleGameOver;
     }
 
 
@@ -198,5 +201,11 @@ public class UnitSelectionHandler : MonoBehaviour
                 unit.Select();
             }
         }
+    }
+
+
+    private void ClientHandleGameOver(string winnerName)
+    {
+        enabled = false;
     }
 }

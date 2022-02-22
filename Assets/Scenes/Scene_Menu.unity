@@ -353,21 +353,5 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3328415302618244959, guid: 8de7aa6c49c47b441a271cd5aff0aaca, type: 3}
-      propertyPath: spawnPrefabs.Array.size
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 3328415302618244959, guid: 8de7aa6c49c47b441a271cd5aff0aaca, type: 3}
-      propertyPath: offlineScene
-      value: Assets/Scenes/Scene_Menu.unity
-      objectReference: {fileID: 0}
-    - target: {fileID: 3328415302618244959, guid: 8de7aa6c49c47b441a271cd5aff0aaca, type: 3}
-      propertyPath: onlineScene
-      value: Assets/Scenes/Scene_Map_01.unity
-      objectReference: {fileID: 0}
-    - target: {fileID: 3328415302618244959, guid: 8de7aa6c49c47b441a271cd5aff0aaca, type: 3}
-      propertyPath: spawnPrefabs.Array.data[2]
-      value: 
-      objectReference: {fileID: 6830034791689141803, guid: 599633aaeffc26b4192432fdafb142e4, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8de7aa6c49c47b441a271cd5aff0aaca, type: 3}

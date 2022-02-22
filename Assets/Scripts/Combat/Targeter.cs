@@ -2,12 +2,26 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
+using Assets.Scripts.Buildings;
 
 //this class represent anything that can shoot at other things
 //stick to the unit so it can target things
 public class Targeter : NetworkBehaviour
 {
-    private Targetable target; 
+    private Targetable target;
+
+
+
+    public override void OnStartServer()
+    {
+        GameOverHandler.ServerOnGameOver += ServerHandleGameOver;
+    }
+
+
+    public override void OnStopServer()
+    {
+        GameOverHandler.ServerOnGameOver -= ServerHandleGameOver;
+    }
 
 
     public Targetable GetTarget()
@@ -38,6 +52,12 @@ public class Targeter : NetworkBehaviour
 
     }
 
+
+    [Server]
+    void ServerHandleGameOver()
+    {
+        ClearTarget();
+    }
 
     #endregion
 }
