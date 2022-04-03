@@ -3,9 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 using Assets.Scripts.Buildings;
+using System;
 public class RTSPlayer : NetworkBehaviour
 {
-    [SerializeField] Building[] buildings = new Building[0];//edit in editor
+    [SyncVar (hook = nameof(ClientHandleResourcesUpdated))]
+    private int resources = 500;
+
+    public event Action<int> ClientOnResourcesUpdated;
+
+    //[SerializeField] Building[] buildings = new Building[2];//edit in editor
+    public List<Building> buildings = new List<Building>();
     //this list exist both in client and server
     private List<Unit> myUnits = new List<Unit>();
     List<Building> myBuildings = new List<Building>();
@@ -19,6 +26,14 @@ public class RTSPlayer : NetworkBehaviour
         return myBuildings;
     }
 
+    public int GetResources() {
+        return resources;
+    }
+
+    [Server]
+    public void SetResources(int resources) {
+        this.resources = resources;
+    }
 
     #region Server
     public override void OnStartServer()
@@ -41,15 +56,28 @@ public class RTSPlayer : NetworkBehaviour
     public void CmdTryPlaceBuilding(int buildingID, Vector3 spawnPosition) {
 
         Building buildingToSpawn = null;
+        int length = buildings.Count;
         //which building is it?
-        foreach(Building building in buildings) {
-            if(building.GetId() == buildingID) {
+
+        for(int i = 0; i < length; i++) {
+            Building building = buildings[i];
+            Debug.Log(building.GetId() + "  " + buildingID);
+            if (building.GetId() == buildingID) {
                 buildingToSpawn = building;
             }
-            break;
         }
+
+        //foreach(Building building in buildings) {
+        //    Debug.Log(building.GetId() + "  " + buildingID);
+        //    if(building.GetId() == buildingID) {
+        //        buildingToSpawn = building;
+        //    }
+        //    break;
+        //}
         //invalid ID, do nothing
-        if(buildingToSpawn is null) { return; }
+        if(buildingToSpawn is null) {
+            Debug.LogWarning("null building, id = " + buildingID);
+            return; }
 
         //valid ID, spawn building
         GameObject buildingInstance =  Instantiate(buildingToSpawn.gameObject, 
@@ -61,14 +89,6 @@ public class RTSPlayer : NetworkBehaviour
         NetworkServer.Spawn(buildingInstance, connectionToClient);
 
     }
-
-
-
-
-
-
-
-
 
 
 
@@ -127,6 +147,9 @@ public class RTSPlayer : NetworkBehaviour
 
         myBuildings.Remove(building);
     }
+
+
+
 
 
 
@@ -198,6 +221,10 @@ public class RTSPlayer : NetworkBehaviour
     private void AuthorityHandleBuildingDespawned(Building building)
     {
         myBuildings.Remove(building);
+    }
+
+    private void ClientHandleResourcesUpdated(int oldResource, int newResource) {
+        ClientOnResourcesUpdated?.Invoke(newResource);
     }
     #endregion
 }

@@ -80,11 +80,14 @@ namespace Assets.Scripts.Buildings
             if (!Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, floorMask)) {
                 return;
             }
-
-            buildingPreviewInstance.transform.position = hit.point;
-            if (!buildingPreviewInstance.activeSelf) {
-                buildingPreviewInstance.SetActive(true);
+            if(buildingPreviewInstance != null) {
+                buildingPreviewInstance.transform.position = hit.point;
+                if (!buildingPreviewInstance.activeSelf) {
+                    buildingPreviewInstance.SetActive(true);
+                }
             }
+            
+
         }
     }
 }
