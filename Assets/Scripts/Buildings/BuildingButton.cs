@@ -20,13 +20,14 @@ namespace Assets.Scripts.Buildings
         RTSPlayer player;
         GameObject buildingPreviewInstance;
         Renderer buildingRendererInstance;
-
+        BoxCollider buildingCollider = null;
 
         private void Start()
         {
             mainCamera = Camera.main;
             iconImage.sprite = building.GetIcon();
             priceText.text = building.GetPrice().ToString();
+            buildingCollider = building.GetComponent<BoxCollider>();
            
         }
 
@@ -51,6 +52,10 @@ namespace Assets.Scripts.Buildings
             if(eventData.button != PointerEventData.InputButton.Left) { 
                 return;
             }
+
+
+            if(player.GetResources() < building.GetPrice()) { return; }
+
             buildingPreviewInstance = Instantiate(building.GetBuildingPreview());
             buildingRendererInstance = buildingPreviewInstance.GetComponentInChildren<Renderer>();
             buildingPreviewInstance.SetActive(false);
@@ -85,6 +90,9 @@ namespace Assets.Scripts.Buildings
                 if (!buildingPreviewInstance.activeSelf) {
                     buildingPreviewInstance.SetActive(true);
                 }
+                Color color = player.CanPlaceBuilding(buildingCollider, hit.point) ? player.GetTeamColor() : Color.yellow;
+
+                buildingRendererInstance.material.SetColor("_BaseColor", color);
             }
             
 

@@ -2,17 +2,28 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 public class Unit : NetworkBehaviour
 {
+    [SerializeField] int resourceCost = 10;
     [SerializeField] private UnityEvent onSelected = null;
     [SerializeField] private UnityEvent onDeselected = null;
     [SerializeField] private UnitMovement unitMovement = null;
     [SerializeField] private Targeter targeter = null;
 
     [SerializeField] Health health = null;
+
+
+
+
+
+    public int GetResourceCost() {
+        return resourceCost;
+    }
 
 
     #region Server_Var
@@ -66,6 +77,9 @@ public class Unit : NetworkBehaviour
     {
         NetworkServer.Destroy(gameObject);
     }
+
+
+
     #endregion
 
     #region Client
@@ -115,5 +129,10 @@ public class Unit : NetworkBehaviour
 
         AuthorityOnUnitDespawned?.Invoke(this);
     }
+
+
+
+
     #endregion
+
 }

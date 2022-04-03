@@ -16,6 +16,21 @@ public class RTSPlayer : NetworkBehaviour
     //this list exist both in client and server
     private List<Unit> myUnits = new List<Unit>();
     List<Building> myBuildings = new List<Building>();
+
+    [SerializeField] LayerMask buildingBlockLayer = new LayerMask();
+    [SerializeField] float rangeLimit = 5f;
+    private Color teamColor = new Color();
+
+
+    public Color GetTeamColor() {
+        return teamColor;
+    }
+
+    [Server]
+    public void SetTeamColor(Color color) {
+        teamColor = color;
+    }
+
     public List<Unit> GetMyUnits()
     {
         return myUnits;
@@ -34,6 +49,27 @@ public class RTSPlayer : NetworkBehaviour
     public void SetResources(int resources) {
         this.resources = resources;
     }
+
+
+    public bool CanPlaceBuilding(BoxCollider buildingCollider, Vector3 spawnPosition) {
+        if (Physics.CheckBox(spawnPosition + buildingCollider.center,
+                            buildingCollider.size / 2, Quaternion.identity, buildingBlockLayer)) {
+            return false; //overlapping something, we do not spawn
+        }
+
+
+        //close enough to 1 of our buildings?
+        for (int i = 0; i < myBuildings.Count; i++) {
+            Building building = myBuildings[i];
+            if (Vector3.Distance(spawnPosition, building.transform.position) <= rangeLimit) {
+                return true;
+            }
+
+        }
+        return false;
+    }
+
+
 
     #region Server
     public override void OnStartServer()
@@ -79,7 +115,22 @@ public class RTSPlayer : NetworkBehaviour
             Debug.LogWarning("null building, id = " + buildingID);
             return; }
 
-        //valid ID, spawn building
+        //valid ID!
+
+
+        //valid resource?
+        if(resources < buildingToSpawn.GetPrice()) { return; }
+
+        //valid position?
+        BoxCollider buildingCollider = buildingToSpawn.GetComponent<BoxCollider>();
+        if(!CanPlaceBuilding(buildingCollider, spawnPosition)) {
+            return;
+        }
+
+
+
+        //pass every check point! spawn building!
+
         GameObject buildingInstance =  Instantiate(buildingToSpawn.gameObject, 
                                                     spawnPosition, 
                                                     buildingToSpawn.transform.rotation);
@@ -88,6 +139,8 @@ public class RTSPlayer : NetworkBehaviour
         //spawn on the network, show this building to all players
         NetworkServer.Spawn(buildingInstance, connectionToClient);
 
+
+        SetResources(resources - buildingToSpawn.GetPrice());
     }
 
 
